@@ -1,0 +1,27 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: helloworld
+spec:
+  entryPoints:
+    - web
+  routes:
+    - kind: Rule
+      match: Host(`gln-vks-workshop.linecorp-dev.com`) && PathPrefix(`/lw#####/hello`)
+      middlewares:
+        - name: strip-prefix
+      services:
+        - name: helloworld
+          port: 8080
+
+
+---
+# Strip prefix
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: strip-prefix
+spec:
+  replacePathRegex:
+    regex: ^/lw.*/(.*)
+    replacement: /${1}
